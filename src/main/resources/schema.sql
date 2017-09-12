@@ -1,8 +1,7 @@
- -- Dropping triggers sequence and tables
+
 
   DROP SEQUENCE IF EXISTS Hoover_Seq;
-  -- DROP TRIGGER IF EXISTS insert_Hoover ON "Hoover_Table";
---DROP FUNCTION IF EXISTS new_Hover_func();
+
 
  CREATE SEQUENCE Hoover_Seq
    INCREMENT 1

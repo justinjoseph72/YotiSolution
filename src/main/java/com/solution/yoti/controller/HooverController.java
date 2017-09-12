@@ -36,7 +36,7 @@ public class HooverController {
     @RequestMapping(path = "/getResults", method = RequestMethod.POST)
     @ApiOperation(value = "service to get the hoover coordinates and number of patches cleaned")
     @ApiResponses( value = {
-            @ApiResponse(code = 200,message = "The hoover has cleaned up the room successfully"),
+            @ApiResponse(code = 201,message = "The hoover has cleaned up the room successfully and records added to database."),
             @ApiResponse(code = 400,message = "The input data is not a valid data. Check response headers for error_message"),
             @ApiResponse(code = 500, message = "An error has occured.Check response headers for error_message")
     })
@@ -51,7 +51,7 @@ public class HooverController {
                 if(inputModel!=null){
                     ResultModel resultModel = service.cleanRoomWithHoover(inputModel);
                     logger.debug("{} end",method_name);
-                    return new ResponseEntity<ResultModel>(resultModel,HttpStatus.OK);
+                    return new ResponseEntity<ResultModel>(resultModel,HttpStatus.CREATED);
                 }
             } catch (IOException e) {
                 logger.info("{} invalid json String",method_name);
