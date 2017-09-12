@@ -4,13 +4,14 @@ The table creation and sequence creation code is present in schema.sql and it is
 There is no need to run this script in the database as Spring boot will run this script when starting the application.
 
 The application.properties file has details for the
-database server name (localhost)
-username
-password. 
-These needs to be changed match the running environment.
-Ther server port is set to 8085. This can also be changed to any desired port.
+__database server name (localhost)__,
+__username__ and
+__password__. 
+__These needs to be changed match the running environment.__
+The server port is set to 8085. This can also be changed to any desired port.
 Once the database is set up and the details are correctly updated in the application.properties file the application can be run by maven command from the project folder having the pom.xml
->mvn spring-boot:run
+> *mvn clean install
+> *mvn spring-boot:run
 
 Once the application has started you can go to the following link
 [http://localhost:8085/swagger-ui.html]()
