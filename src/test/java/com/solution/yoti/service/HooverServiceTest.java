@@ -50,6 +50,32 @@ public class HooverServiceTest {
         ObjectMapper mapper = new ObjectMapper();
         String outputJsonStr = mapper.writeValueAsString(outputModel);
         Assert.assertEquals(resultStr,outputJsonStr);
+
+    }
+
+    @Test
+    public void test_result_matching_with_Wall() throws HooverException, ValidationException, IOException {
+        String resultStr = "{\"coords\":[0,4],\"patches\":4}";
+        String inputJsonStr="{\n" +
+                "  \"roomSize\" : [5, 5],\n" +
+                "  \"coords\" : [2, 1],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, 2],\n" +
+                "    [3, 2],\n" +
+                "    [2, 3],\n" +
+                "    [1, 4],\n" +
+                "    [0, 4]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNNWNSSWWNN\"\n" +
+                "}";
+        init(inputJsonStr);
+
+        ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        Assert.assertNotNull(outputModel);
+        ObjectMapper mapper = new ObjectMapper();
+        String outputJsonStr = mapper.writeValueAsString(outputModel);
+        Assert.assertEquals(resultStr,outputJsonStr);
+
     }
 
     @Test

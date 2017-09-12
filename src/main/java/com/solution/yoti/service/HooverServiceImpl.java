@@ -34,6 +34,7 @@ public class HooverServiceImpl implements HooverService{
     public ResultModel cleanRoomWithHoover(InputModel inputModel) throws HooverException,ValidationException {
         final String method_name ="cleanRoomWithHoover";
         logger.debug("{} start",method_name);
+        reset();
         if(inputModel!=null){
             try {
                 //set up data for processing
@@ -116,40 +117,43 @@ public class HooverServiceImpl implements HooverService{
                 currentPosition.setY(oldY+1);
                 if(roomDimeneion.getY() -1 <currentPosition.getY()){
                     currentPosition.setY(oldY);
+                    logger.info("WALL" );
                 }
                 cleanDirt();
-                logger.info("Moved North"); break;
+                 break;
             }
             case "E": {
                 currentPosition.setX(oldX+1);
                 if(roomDimeneion.getX() -1 <currentPosition.getX()){
                     currentPosition.setX(oldX);
+                    logger.info("WALL" );
                 }
                 cleanDirt();
-                logger.info("Moved East"); break;
+                 break;
             }
             case "W": {
                 currentPosition.setX(oldX-1);
-                if(currentPosition.getX() -1 < 0){
+                if(currentPosition.getX() < 0){
                     currentPosition.setX(oldX);
+                    logger.info("WALL" );
                 }
                 cleanDirt();
-                logger.info("Moved West"); break;
+                 break;
             }
             case "S": {
                 currentPosition.setY(oldY-1);
-                if( currentPosition.getY()-1 < 0){
+                if( currentPosition.getY() < 0){
                     currentPosition.setY(oldY);
+                    logger.info("WALL" );
                 }
                 cleanDirt();
-                logger.info("Moved South"); break;
+                break;
             }
         }
     }
 
     private void cleanDirt() {
         if(!patchLocations.isEmpty() &&patchLocations.remove(currentPosition)){
-            logger.info("current position {}",currentPosition );
             patchesCleaned = patchesCleaned + 1;
             logger.info("Cleaned dirt");
         }
@@ -164,6 +168,15 @@ public class HooverServiceImpl implements HooverService{
            logger.info("{} exception {}",method_name,e.getStatus());
            throw e;
         }
+    }
+
+    private void reset(){
+          roomDimeneion =null;
+          initialPosition =null;
+          patchLocations = null;
+          instructions = null;
+          currentPosition = null;
+          patchesCleaned = 0;
     }
 
 }
