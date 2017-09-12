@@ -44,7 +44,6 @@ public class HooverServiceTest {
                 "  \"instructions\" : \"NNESEESWNWW\"\n" +
                 "}";
         init(inputJsonStr);
-
         ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
         Assert.assertNotNull(outputModel);
         ObjectMapper mapper = new ObjectMapper();
@@ -69,7 +68,6 @@ public class HooverServiceTest {
                 "  \"instructions\" : \"NNNWNSSWWNN\"\n" +
                 "}";
         init(inputJsonStr);
-
         ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
         Assert.assertNotNull(outputModel);
         ObjectMapper mapper = new ObjectMapper();
@@ -77,6 +75,30 @@ public class HooverServiceTest {
         Assert.assertEquals(resultStr,outputJsonStr);
 
     }
+
+    @Test
+    public void test_matching_traversing_dirt_again()  throws HooverException, ValidationException, IOException{
+        String resultStr = "{\"coords\":[3,3],\"patches\":3}";
+        String inputJsonStr="{\n" +
+                "  \"roomSize\" : [5, 5],\n" +
+                "  \"coords\" : [2, 1],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, 2],\n" +
+                "    [3, 2],\n" +
+                "    [2, 3],\n" +
+                "    [1, 4],\n" +
+                "    [0, 4]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNNWWEEES\"\n" +
+                "}";
+        init(inputJsonStr);
+        ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        Assert.assertNotNull(outputModel);
+        ObjectMapper mapper = new ObjectMapper();
+        String outputJsonStr = mapper.writeValueAsString(outputModel);
+        Assert.assertEquals(resultStr,outputJsonStr);
+    }
+
 
     @Test
     public void test_input_validation_instructions() throws IOException, HooverException {
@@ -100,7 +122,7 @@ public class HooverServiceTest {
     }
 
     @Test
-    public void test_input_validation_initial_coordinates() throws IOException, HooverException {
+    public void test_input_validation_initial_Incorrect_coordinates() throws IOException, HooverException {
         String inputString = "{\n" +
                 "  \"roomSize\" : [5, 5],\n" +
                 "  \"coords\" : [1, 2,3],\n" +
@@ -117,6 +139,91 @@ public class HooverServiceTest {
         }
         catch (ValidationException e){
             Assert.assertEquals(HooverConstants.INITIAL_COORDINATES_ERROR,e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_input_validation_initial_absent() throws IOException, HooverException {
+        String inputString = "{\n" +
+                "  \"roomSize\" : [5, 5],\n" +
+               // "  \"coords\" : [1, 2,3],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, 0],\n" +
+                "    [2, 2],\n" +
+                "    [2, 3]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNESEESWONWW\"\n" +
+                "}";
+        init(inputString);
+        try{
+            ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        }
+        catch (ValidationException e){
+            Assert.assertEquals(HooverConstants.INITIAL_COORDINATES_ERROR,e.getMessage());
+        }
+    }
+
+
+    @Test
+    public void test_input_validation_initial_coordinates_negative() throws IOException, HooverException {
+        String inputString = "{\n" +
+                "  \"roomSize\" : [5, 5],\n" +
+                "  \"coords\" : [1, -2],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, 0],\n" +
+                "    [2, 2],\n" +
+                "    [2, 3]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNESEESWONWW\"\n" +
+                "}";
+        init(inputString);
+        try{
+            ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        }
+        catch (ValidationException e){
+            Assert.assertEquals(HooverConstants.INITIAL_COORDINATES_OUT_OF_ROOM_ERROR,e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_input_validation_initial_coordinates__outside_room_1() throws IOException, HooverException {
+        String inputString = "{\n" +
+                "  \"roomSize\" : [5, 5],\n" +
+                "  \"coords\" : [1, 9],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, 0],\n" +
+                "    [2, 2],\n" +
+                "    [2, 3]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNESEESWONWW\"\n" +
+                "}";
+        init(inputString);
+        try{
+            ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        }
+        catch (ValidationException e){
+            Assert.assertEquals(HooverConstants.INITIAL_COORDINATES_OUT_OF_ROOM_ERROR,e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_input_validation_initial_coordinates__outside_room_2() throws IOException, HooverException {
+        String inputString = "{\n" +
+                "  \"roomSize\" : [5, 5],\n" +
+                "  \"coords\" : [12, 3],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, 0],\n" +
+                "    [2, 2],\n" +
+                "    [2, 3]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNESEESWONWW\"\n" +
+                "}";
+        init(inputString);
+        try{
+            ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        }
+        catch (ValidationException e){
+            Assert.assertEquals(HooverConstants.INITIAL_COORDINATES_OUT_OF_ROOM_ERROR,e.getMessage());
         }
     }
 
@@ -138,6 +245,69 @@ public class HooverServiceTest {
         }
         catch (ValidationException e){
             Assert.assertEquals(HooverConstants.ROOM_DIMENSTION_ERROR,e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_input_validation_room_dimension_absent() throws IOException, HooverException {
+        String inputString = "{\n" +
+              //  "  \"roomSize\" : [5],\n" +
+                "  \"coords\" : [1, 2],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, 0],\n" +
+                "    [2, 2],\n" +
+                "    [2, 3]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNESEESWONWW\"\n" +
+                "}";
+        init(inputString);
+        try{
+            ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        }
+        catch (ValidationException e){
+            Assert.assertEquals(HooverConstants.ROOM_DIMENSTION_ERROR,e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_input_validation_room_dimension_negative_1() throws IOException, HooverException {
+        String inputString = "{\n" +
+                  "  \"roomSize\" : [-1,5],\n" +
+                "  \"coords\" : [1, 2],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, 0],\n" +
+                "    [2, 2],\n" +
+                "    [2, 3]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNESEESWONWW\"\n" +
+                "}";
+        init(inputString);
+        try{
+            ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        }
+        catch (ValidationException e){
+            Assert.assertEquals(HooverConstants.INVALID_ROOM_SIZE,e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_input_validation_room_dimension_negative_2() throws IOException, HooverException {
+        String inputString = "{\n" +
+                "  \"roomSize\" : [1,-5],\n" +
+                "  \"coords\" : [1, 2],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, 0],\n" +
+                "    [2, 2],\n" +
+                "    [2, 3]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNESEESWONWW\"\n" +
+                "}";
+        init(inputString);
+        try{
+            ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        }
+        catch (ValidationException e){
+            Assert.assertEquals(HooverConstants.INVALID_ROOM_SIZE,e.getMessage());
         }
     }
 

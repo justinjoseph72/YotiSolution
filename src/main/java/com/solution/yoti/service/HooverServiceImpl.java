@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class HooverServiceImpl implements HooverService{
 
-    private Point roomDimeneion =null;
+    private Point roomDimension =null;
     private Point initialPosition =null;
     private List<Point> patchLocations = null;
     private String instructions = null;
@@ -84,15 +84,26 @@ public class HooverServiceImpl implements HooverService{
         final String method_name = "setup";
         logger.debug("{} start",method_name);
         List<Integer> roomSizeList = inputModel.getRoomSize();
-        //validation and setup for roomsize
-        if(roomSizeList!=null && roomSizeList.size()==2){
-            roomDimeneion = new Point(roomSizeList.get(0),roomSizeList.get(1));
-            logger.info("room is " + roomDimeneion.toString());
-        }
-        else{
+        /*
+        * validation and setup for roomsize
+         */
+
+        //no room present or invalid number of coordinates
+        if(roomSizeList==null || roomSizeList.size()!=2){
             throw new ValidationException(HooverConstants.ROOM_DIMENSTION_ERROR);
         }
-        //validation and setup for patches
+
+        if(roomSizeList!=null && roomSizeList.size()==2){
+            //any negative coordinate present
+            if(roomSizeList.stream().filter(x->x<0).findAny().isPresent()){
+                throw new ValidationException(HooverConstants.INVALID_ROOM_SIZE);
+            }
+            roomDimension = new Point(roomSizeList.get(0),roomSizeList.get(1));
+            logger.info("room is " + roomDimension.toString());
+        }
+        /*
+         *validation and setup for patches
+         */
         if(inputModel.getPatches()!=null && !inputModel.getPatches().isEmpty() ){
             patchLocations = new ArrayList<>();
             inputModel.getPatches().forEach(patchPair->{
@@ -101,15 +112,26 @@ public class HooverServiceImpl implements HooverService{
                 patchLocations.add(patch);
             });
         }
-        //validation and setup for inital coordinates
+        /*
+        *validation and set up for inital coordinate
+         */
+        //no inital coordinate present or invalid number of coordinates
+        if(inputModel.getCoords()==null || inputModel.getCoords().size()!=2){
+            throw new ValidationException(HooverConstants.INITIAL_COORDINATES_ERROR);
+        }
+        // any negative coordinate or the hoover is out of room
         if(inputModel.getCoords()!=null && inputModel.getCoords().size()==2){
+            if(inputModel.getCoords().get(0) < 0 || inputModel.getCoords().get(0) >= inputModel.getRoomSize().get(0)
+                    || inputModel.getCoords().get(1) < 0 || inputModel.getCoords().get(1) >= inputModel.getRoomSize().get(1)
+                    ){
+                throw new ValidationException(HooverConstants.INITIAL_COORDINATES_OUT_OF_ROOM_ERROR);
+            }
             initialPosition = new Point(inputModel.getCoords().get(0),inputModel.getCoords().get(1));
             logger.info("initial position  is " + initialPosition.toString());
         }
-        else{
-            throw new ValidationException(HooverConstants.INITIAL_COORDINATES_ERROR);
-        }
-        // validation and setup for instructions
+        /*
+         *validation and setup for instructions
+          */
         if(inputModel.getInstructions().matches("[NSEW]+")){
             instructions = inputModel.getInstructions();
         }else{
@@ -130,7 +152,7 @@ public class HooverServiceImpl implements HooverService{
         switch (direction){
             case "N": {
                 currentPosition.setY(oldY+1);
-                if(roomDimeneion.getY() -1 <currentPosition.getY()){
+                if(roomDimension.getY() -1 <currentPosition.getY()){
                     currentPosition.setY(oldY);
                     logger.info("WALL" );
                 }
@@ -139,7 +161,7 @@ public class HooverServiceImpl implements HooverService{
             }
             case "E": {
                 currentPosition.setX(oldX+1);
-                if(roomDimeneion.getX() -1 <currentPosition.getX()){
+                if(roomDimension.getX() -1 <currentPosition.getX()){
                     currentPosition.setX(oldX);
                     logger.info("WALL" );
                 }
@@ -198,7 +220,7 @@ public class HooverServiceImpl implements HooverService{
      * This method will reset all the data
      */
     private void reset(){
-          roomDimeneion =null;
+          roomDimension =null;
           initialPosition =null;
           patchLocations = null;
           instructions = null;

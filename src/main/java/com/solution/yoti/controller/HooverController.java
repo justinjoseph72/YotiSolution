@@ -33,14 +33,14 @@ public class HooverController {
     private final Logger logger = LoggerFactory.getLogger(HooverController.class);
 
 
-    @RequestMapping(path = "/getResults", method = RequestMethod.POST)
-    @ApiOperation(value = "service to get the hoover coordinates and number of patches cleaned")
+    @RequestMapping(path = "/cleanRoom", method = RequestMethod.POST)
+    @ApiOperation(value = "Service to get the current hoover postion and number of patches cleaned.")
     @ApiResponses( value = {
-            @ApiResponse(code = 201,message = "The hoover has cleaned up the room successfully and records added to database."),
+            @ApiResponse(code = 201,message = "Cleaning Successful and Records added to database."),
             @ApiResponse(code = 400,message = "The input data is not a valid data. Check response headers for error_message"),
-            @ApiResponse(code = 500, message = "An error has occured.Check response headers for error_message")
+            @ApiResponse(code = 500, message = "An error has occurred.Check response headers for error_message")
     })
-    public ResponseEntity<ResultModel> getResult(@RequestBody @ApiParam(value = "input json data") String jsonStr)  {
+    public ResponseEntity<ResultModel> getResult(@RequestBody @ApiParam(value = "Input json data") String jsonStr)  {
         final String method_name ="getResult";
         logger.debug("{} start",method_name);
         if(StringUtils.isNotBlank(jsonStr)){
