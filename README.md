@@ -7,8 +7,9 @@ The application.properties file has details for the
 > * __database server name (localhost)__
 > * __username__ 
 > * __password__
-__These needs to be changed match the running environment.__
 
+__The above properties needs to be changed match the running environment.__
+The database-name proptery __should not be changed__ from 'postgres'.
 
 The server port is set to 8085. This can also be changed to any desired port.
 Once the database is set up and the details are correctly updated in the application.properties file the application can be run by maven command from the project folder having the pom.xml
