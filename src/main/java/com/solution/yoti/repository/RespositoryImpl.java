@@ -24,6 +24,12 @@ public class RespositoryImpl implements HooverRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    /**
+     * This method will write data to database
+     * @param inputModel
+     * @param resultModel
+     * @throws HooverException
+     */
     @Override
     @Transactional
     public void saveData(InputModel inputModel, ResultModel resultModel) throws HooverException {

@@ -30,6 +30,16 @@ public class HooverServiceImpl implements HooverService{
     HooverRepository repo;
     private final Logger logger = LoggerFactory.getLogger(HooverServiceImpl.class);
 
+    /**
+     * this method will clean the room with hoover.
+     * It takes a InputModel object and setups the data to process.
+     * Id successfull the input and the result will be saved to database
+     *
+     * @param inputModel
+     * @return
+     * @throws HooverException
+     * @throws ValidationException
+     */
     @Override
     public ResultModel cleanRoomWithHoover(InputModel inputModel) throws HooverException,ValidationException {
         final String method_name ="cleanRoomWithHoover";
@@ -109,6 +119,11 @@ public class HooverServiceImpl implements HooverService{
         logger.info("instructions are " + instructions);
     }
 
+    /**
+     * This method will update the current location and clean the dirt
+     * based on the direction
+     * @param direction
+     */
     private void moveHoover(String direction){
         int oldX = currentPosition.getX();
         int oldY = currentPosition.getY();
@@ -152,6 +167,9 @@ public class HooverServiceImpl implements HooverService{
         }
     }
 
+    /**
+     * This method will remove the position from the patches list to clean it
+     */
     private void cleanDirt() {
         if(!patchLocations.isEmpty() &&patchLocations.remove(currentPosition)){
             patchesCleaned = patchesCleaned + 1;
@@ -159,6 +177,12 @@ public class HooverServiceImpl implements HooverService{
         }
     }
 
+    /**
+     * This method will write the data to the database
+     * @param inputModel
+     * @param resultModel
+     * @throws HooverException
+     */
     private void saveToDatabase(InputModel inputModel, ResultModel resultModel) throws HooverException {
         final String method_name ="saveToDatabase";
         logger.debug("{} start",method_name);
@@ -170,6 +194,9 @@ public class HooverServiceImpl implements HooverService{
         }
     }
 
+    /**
+     * This method will reset all the data
+     */
     private void reset(){
           roomDimeneion =null;
           initialPosition =null;

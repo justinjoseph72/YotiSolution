@@ -7,6 +7,10 @@ import com.solution.yoti.exception.ValidationException;
 import com.solution.yoti.model.InputModel;
 import com.solution.yoti.model.ResultModel;
 import com.solution.yoti.service.HooverService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +26,21 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-public class HooverControlller {
+public class HooverController {
     @Autowired
     HooverService service;
 
-    private final Logger logger = LoggerFactory.getLogger(HooverControlller.class);
+    private final Logger logger = LoggerFactory.getLogger(HooverController.class);
 
 
     @RequestMapping(path = "/getResults", method = RequestMethod.POST)
-    public ResponseEntity<ResultModel> getResult(@RequestBody  String jsonStr)  {
+    @ApiOperation(value = "service to get the hoover coordinates and number of patches cleaned")
+    @ApiResponses( value = {
+            @ApiResponse(code = 200,message = "The hoover has cleaned up the room successfully"),
+            @ApiResponse(code = 400,message = "The input data is not a valid data. Check response headers for error_message"),
+            @ApiResponse(code = 500, message = "An error has occured.Check response headers for error_message")
+    })
+    public ResponseEntity<ResultModel> getResult(@RequestBody @ApiParam(value = "input json data") String jsonStr)  {
         final String method_name ="getResult";
         logger.debug("{} start",method_name);
         if(StringUtils.isNotBlank(jsonStr)){
@@ -38,10 +48,11 @@ public class HooverControlller {
             try {
                 InputModel inputModel = mapper.readValue(jsonStr,InputModel.class);
                 //start cleaning process
-                ResultModel resultModel = service.cleanRoomWithHoover(inputModel);
-                logger.debug("{} end",method_name);
-                return new ResponseEntity<ResultModel>(resultModel,HttpStatus.OK);
-
+                if(inputModel!=null){
+                    ResultModel resultModel = service.cleanRoomWithHoover(inputModel);
+                    logger.debug("{} end",method_name);
+                    return new ResponseEntity<ResultModel>(resultModel,HttpStatus.OK);
+                }
             } catch (IOException e) {
                 logger.info("{} invalid json String",method_name);
                 logger.info(jsonStr);
@@ -53,10 +64,9 @@ public class HooverControlller {
                 logger.info("{} Validation Exception {}",method_name,e.getMessage());
                 return new ResponseEntity<ResultModel>(createHeaders(e.getMessage()),HttpStatus.BAD_REQUEST);
             }
-
         }
         logger.debug("{} end",method_name);
-        return new ResponseEntity<ResultModel>( HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ResultModel>(createHeaders(HooverConstants.INVALID_JSON_STRING), HttpStatus.NOT_FOUND);
     }
 
     private HttpHeaders createHeaders(String message){
