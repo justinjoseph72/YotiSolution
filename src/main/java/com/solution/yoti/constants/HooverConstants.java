@@ -8,6 +8,7 @@ public class HooverConstants {
     public static final String INITIAL_COORDINATES_ERROR ="INITIAL_COORDINATES_ERROR";
     public static final String INITIAL_COORDINATES_OUT_OF_ROOM_ERROR ="INITIAL_COORDINATES_OUT_OF_ROOM_ERROR";
     public static final String INVALID_INSTRUCTIONS ="INVALID_INSTRUCTIONS";
+    public static final String INVALID_PATCH_COORDINATE ="INVALID_PATCH_COORDINATE";
     public static final String INVALID_JSON_STRING ="INVALID_JSON_STRING";
     public static final String ERROR_MESSAGE ="Error_Message";
 

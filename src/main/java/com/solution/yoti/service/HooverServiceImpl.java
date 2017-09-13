@@ -104,13 +104,20 @@ public class HooverServiceImpl implements HooverService{
         /*
          *validation and setup for patches
          */
+
         if(inputModel.getPatches()!=null && !inputModel.getPatches().isEmpty() ){
             patchLocations = new ArrayList<>();
-            inputModel.getPatches().forEach(patchPair->{
+            for(List<Integer> patchPair : inputModel.getPatches() ){
+                if(patchPair.get(0)<0 || patchPair.get(1)<0
+                        || patchPair.get(0) >= inputModel.getRoomSize().get(0)
+                        || patchPair.get(1) >= inputModel.getRoomSize().get(1)
+                        ){
+                    throw new ValidationException(HooverConstants.INVALID_PATCH_COORDINATE);
+                }
                 Point patch = new Point(patchPair.get(0),patchPair.get(1));
                 logger.info("patch position  is " + patch.toString());
                 patchLocations.add(patch);
-            });
+            }
         }
         /*
         *validation and set up for inital coordinate

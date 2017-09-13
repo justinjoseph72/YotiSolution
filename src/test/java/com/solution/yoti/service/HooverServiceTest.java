@@ -34,7 +34,7 @@ public class HooverServiceTest {
     public void test_result_matching() throws HooverException, ValidationException, IOException {
         String resultStr = "{\"coords\":[1,3],\"patches\":1}";
         String inputJsonStr="{\n" +
-                "  \"roomSize\" : [5, 5],\n" +
+                "  \"roomSize\" : [9, 5],\n" +
                 "  \"coords\" : [1, 2],\n" +
                 "  \"patches\" : [\n" +
                 "    [1, 0],\n" +
@@ -224,6 +224,48 @@ public class HooverServiceTest {
         }
         catch (ValidationException e){
             Assert.assertEquals(HooverConstants.INITIAL_COORDINATES_OUT_OF_ROOM_ERROR,e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_input_validation_patch_negative() throws IOException, HooverException {
+        String inputString = "{\n" +
+                "  \"roomSize\" : [5, 5],\n" +
+                "  \"coords\" : [2, 3],\n" +
+                "  \"patches\" : [\n" +
+                "    [1, -1],\n" +
+                "    [2, 2],\n" +
+                "    [2, 3]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNESEESWONWW\"\n" +
+                "}";
+        init(inputString);
+        try{
+            ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        }
+        catch (ValidationException e){
+            Assert.assertEquals(HooverConstants.INVALID_PATCH_COORDINATE,e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_input_validation_patch_outside_room() throws IOException, HooverException {
+        String inputString = "{\n" +
+                "  \"roomSize\" : [5, 5],\n" +
+                "  \"coords\" : [2, 3],\n" +
+                "  \"patches\" : [\n" +
+                "    [1,8],\n" +
+                "    [2, 2],\n" +
+                "    [2, 3]\n" +
+                "  ],\n" +
+                "  \"instructions\" : \"NNESEESWONWW\"\n" +
+                "}";
+        init(inputString);
+        try{
+            ResultModel outputModel = service.cleanRoomWithHoover(inputModel);
+        }
+        catch (ValidationException e){
+            Assert.assertEquals(HooverConstants.INVALID_PATCH_COORDINATE,e.getMessage());
         }
     }
 
