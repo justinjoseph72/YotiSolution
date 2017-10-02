@@ -1,4 +1,4 @@
-# YotiSolution
+# Yoti Problem Solution
 The application is build using Spring Boot. The main class in Application.java. On successfull process of the input the data wil be stored in Postgres database. I have used Postgres 9.4 version database.
 
 To run the application following needs to be done:
